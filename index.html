@@ -1,167 +1,40 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>買い物メモ</title>
+function findBestCombination(){
 
-<style>
+let target = Number(document.getElementById("target").value);
 
-body{
-font-family:Arial;
-background:#f0f0f0;
-text-align:center;
-padding:20px;
+let n = items.length;
+
+let bestSum = 0;
+let bestItems = [];
+
+for(let i = 0; i < (1 << n); i++){
+
+let sum = 0;
+let names = [];
+
+for(let j = 0; j < n; j++){
+
+if(i & (1 << j)){
+sum += items[j].price;
+names.push(items[j].product);
 }
-
-.container{
-background:white;
-padding:20px;
-border-radius:15px;
-max-width:400px;
-margin:auto;
-}
-
-input{
-width:90%;
-padding:10px;
-margin:5px;
-font-size:18px;
-}
-
-button{
-padding:8px;
-font-size:16px;
-margin:5px;
-}
-
-ul{
-text-align:left;
-padding:0;
-}
-
-li{
-list-style:none;
-background:#eee;
-margin:5px;
-padding:10px;
-border-radius:8px;
-display:flex;
-justify-content:space-between;
-}
-
-.delete{
-background:red;
-color:white;
-border:none;
-border-radius:5px;
-}
-
-</style>
-</head>
-
-<body>
-
-<div class="container">
-
-<h2>買い物メモ</h2>
-
-<input type="text" id="product" placeholder="商品名">
-
-<input type="number" id="price" placeholder="値段">
-
-<br>
-
-<button onclick="addItem()">追加</button>
-
-<h3>商品リスト</h3>
-
-<ul id="list"></ul>
-
-<h3>合計</h3>
-
-<p id="total">0 円</p>
-
-</div>
-
-<script>
-
-let items = [];
-
-function addItem(){
-
-let product = document.getElementById("product").value;
-let price = Number(document.getElementById("price").value);
-
-let item = {product:product, price:price};
-
-items.push(item);
-
-saveData();
-displayItems();
-
-document.getElementById("product").value="";
-document.getElementById("price").value="";
 
 }
 
-function displayItems(){
+if(sum <= target){
 
-let list = document.getElementById("list");
-list.innerHTML="";
-
-let total = 0;
-
-items.forEach((item,index)=>{
-
-let li = document.createElement("li");
-
-li.innerHTML =
-item.product + " : " + item.price + "円 " +
-"<button class='delete' onclick='deleteItem("+index+")'>削除</button>";
-
-list.appendChild(li);
-
-total += item.price;
-
-});
-
-document.getElementById("total").textContent = total + " 円";
-
+if(target - sum < target - bestSum){
+bestSum = sum;
+bestItems = names;
 }
-
-function deleteItem(index){
-
-items.splice(index,1);
-
-saveData();
-displayItems();
-
-}
-
-function saveData(){
-
-localStorage.setItem("shoppingList",JSON.stringify(items));
-
-}
-
-function loadData(){
-
-let data = localStorage.getItem("shoppingList");
-
-if(data){
-
-items = JSON.parse(data);
-
-displayItems();
 
 }
 
 }
 
-loadData();
+document.getElementById("result").innerHTML =
+"おすすめ組み合わせ:<br>" +
+bestItems.join(" + ") +
+"<br>合計: " + bestSum + "円";
 
-</script>
-
-</body>
-</html>
+}
