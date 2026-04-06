@@ -28,12 +28,21 @@ margin:5px;
 
 <body>
 
-<h1>Calculator</h1>
+<h1>計算</h1>
 
 <input type="text" id="display" readonly>
 
 <br>
 
+  <h1>商品名</h1>
+<input type="text" id="memo" placeholder="商品名を入力">
+
+<button onclick="saveMemo()">メモ追加</button>
+
+<ul id="memoList"></ul>
+  
+<br>
+  <br>
 <button onclick="add('7')">7</button>
 <button onclick="add('8')">8</button>
 <button onclick="add('9')">9</button>
@@ -73,6 +82,21 @@ function calculate(){
 let result = eval(document.getElementById("display").value);
 document.getElementById("display").value = result;
 }
+
+function saveMemo(){
+
+let memo = document.getElementById("memo").value;
+
+let li = document.createElement("li");
+
+li.textContent = memo;
+
+document.getElementById("memoList").appendChild(li);
+
+document.getElementById("memo").value = "";
+
+}
+  
 </script>
 
 </body>
