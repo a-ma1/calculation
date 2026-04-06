@@ -1,40 +1,186 @@
-function findBestCombination(){
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>買い物最適化アプリ</title>
 
-let target = Number(document.getElementById("target").value);
+<style>
 
-let n = items.length;
+body{
+font-family:Arial;
+background:#f0f0f0;
+text-align:center;
+padding:20px;
+}
 
-let bestSum = 0;
-let bestItems = [];
+.container{
+background:white;
+padding:20px;
+border-radius:15px;
+max-width:400px;
+margin:auto;
+}
 
-for(let i = 0; i < (1 << n); i++){
+input{
+width:90%;
+padding:10px;
+margin:5px;
+font-size:18px;
+}
 
-let sum = 0;
-let names = [];
+button{
+padding:10px;
+font-size:16px;
+margin:5px;
+}
 
-for(let j = 0; j < n; j++){
+li{
+list-style:none;
+background:#eee;
+margin:5px;
+padding:10px;
+border-radius:8px;
+display:flex;
+justify-content:space-between;
+}
 
-if(i & (1 << j)){
-sum += items[j].price;
+.delete{
+background:red;
+color:white;
+border:none;
+border-radius:5px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>買い物メモ</h2>
+
+<input type="text" id="product" placeholder="商品名">
+
+<input type="number" id="price" placeholder="値段">
+
+<br>
+
+<button onclick="addItem()">追加</button>
+
+<ul id="list"></ul>
+
+<h3>目標金額</h3>
+
+<input type="number" id="target" placeholder="目標金額">
+
+<br>
+
+<button onclick="findBest()">最適な組み合わせ</button>
+
+<h3>結果</h3>
+
+<div id="result"></div>
+
+</div>
+
+<script>
+
+let items = [];
+
+function addItem(){
+
+let product = document.getElementById("product").value;
+let price = Number(document.getElementById("price").value);
+
+items.push({product:product,price:price});
+
+displayItems();
+
+document.getElementById("product").value="";
+document.getElementById("price").value="";
+
+}
+
+function displayItems(){
+
+let list=document.getElementById("list");
+list.innerHTML="";
+
+items.forEach((item,index)=>{
+
+let li=document.createElement("li");
+
+li.innerHTML=item.product+" : "+item.price+"円 <button class='delete' onclick='deleteItem("+index+")'>削除</button>";
+
+list.appendChild(li);
+
+});
+
+}
+
+function deleteItem(index){
+
+items.splice(index,1);
+displayItems();
+
+}
+
+function findBest(){
+
+let target=Number(document.getElementById("target").value);
+
+let n=items.length;
+
+let bestSum=Infinity;
+let bestItems=[];
+
+for(let i=0;i<(1<<n);i++){
+
+let sum=0;
+let names=[];
+
+for(let j=0;j<n;j++){
+
+if(i&(1<<j)){
+
+sum+=items[j].price;
 names.push(items[j].product);
-}
-
-}
-
-if(sum <= target){
-
-if(target - sum < target - bestSum){
-bestSum = sum;
-bestItems = names;
-}
 
 }
 
 }
 
-document.getElementById("result").innerHTML =
-"おすすめ組み合わせ:<br>" +
-bestItems.join(" + ") +
-"<br>合計: " + bestSum + "円";
+if(sum>=target && sum<bestSum){
+
+bestSum=sum;
+bestItems=names;
 
 }
+
+}
+
+if(bestItems.length===0){
+
+document.getElementById("result").innerHTML="条件を満たす組み合わせがありません";
+
+}else{
+
+document.getElementById("result").innerHTML=
+
+"おすすめ組み合わせ<br><br>"+
+
+bestItems.join(" + ")+
+
+"<br><br>合計 "+bestSum+" 円";
+
+}
+
+}
+
+</script>
+
+</body>
+</html>
