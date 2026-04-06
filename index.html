@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>買い物計算アプリ</title>
+<title>買い物メモ</title>
 
 <style>
 
@@ -30,13 +30,31 @@ font-size:18px;
 }
 
 button{
-padding:10px;
-font-size:18px;
+padding:8px;
+font-size:16px;
 margin:5px;
 }
 
 ul{
 text-align:left;
+padding:0;
+}
+
+li{
+list-style:none;
+background:#eee;
+margin:5px;
+padding:10px;
+border-radius:8px;
+display:flex;
+justify-content:space-between;
+}
+
+.delete{
+background:red;
+color:white;
+border:none;
+border-radius:5px;
 }
 
 </style>
@@ -68,29 +86,80 @@ text-align:left;
 
 <script>
 
-let total = 0;
+let items = [];
 
 function addItem(){
 
 let product = document.getElementById("product").value;
-
 let price = Number(document.getElementById("price").value);
+
+let item = {product:product, price:price};
+
+items.push(item);
+
+saveData();
+displayItems();
+
+document.getElementById("product").value="";
+document.getElementById("price").value="";
+
+}
+
+function displayItems(){
+
+let list = document.getElementById("list");
+list.innerHTML="";
+
+let total = 0;
+
+items.forEach((item,index)=>{
 
 let li = document.createElement("li");
 
-li.textContent = product + " : " + price + "円";
+li.innerHTML =
+item.product + " : " + item.price + "円 " +
+"<button class='delete' onclick='deleteItem("+index+")'>削除</button>";
 
-document.getElementById("list").appendChild(li);
+list.appendChild(li);
 
-total = total + price;
+total += item.price;
+
+});
 
 document.getElementById("total").textContent = total + " 円";
 
-document.getElementById("product").value = "";
+}
 
-document.getElementById("price").value = "";
+function deleteItem(index){
+
+items.splice(index,1);
+
+saveData();
+displayItems();
 
 }
+
+function saveData(){
+
+localStorage.setItem("shoppingList",JSON.stringify(items));
+
+}
+
+function loadData(){
+
+let data = localStorage.getItem("shoppingList");
+
+if(data){
+
+items = JSON.parse(data);
+
+displayItems();
+
+}
+
+}
+
+loadData();
 
 </script>
 
