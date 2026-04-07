@@ -42,6 +42,17 @@ background:#eee;
 margin:5px;
 padding:10px;
 border-radius:8px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+}
+
+.delete{
+background:red;
+color:white;
+border:none;
+padding:5px 10px;
+border-radius:5px;
 }
 
 </style>
@@ -105,15 +116,25 @@ function displayItems(){
 let list=document.getElementById("list");
 list.innerHTML="";
 
-items.forEach(item=>{
+items.forEach((item,index)=>{
 
 let li=document.createElement("li");
 
-li.textContent=item.name+" : "+item.price+"円 (最大"+item.limit+"個)";
+li.innerHTML=
+item.name+" "+item.price+"円 (最大"+item.limit+"個)"+
+" <button class='delete' onclick='deleteItem("+index+")'>削除</button>";
 
 list.appendChild(li);
 
 });
+
+}
+
+function deleteItem(index){
+
+items.splice(index,1);
+
+displayItems();
 
 }
 
