@@ -1,18 +1,27 @@
 <!DOCTYPE html>
 <html lang="ja">
-
 <head>
 
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 
-<title>買い物組み合わせ計算ツール｜目標金額になる商品組み合わせを自動計算</title>
+<title>買い物組み合わせ計算ツール｜金額ぴったりの組み合わせを自動計算</title>
 
-<meta name="description" content="商品の価格・必須数・最大数を設定すると、目標金額になる買い物の組み合わせを自動計算する無料ツール。すべての組み合わせを瞬時に表示できます。">
+<meta name="description" content="商品の価格や数量を設定すると、目標金額になる買い物の組み合わせを自動計算できる無料ツール。必須数や最大数も設定可能で、条件に合うすべての組み合わせを表示します。">
 
-<meta name="keywords" content="組み合わせ計算, 買い物組み合わせ, 金額計算ツール, 商品組み合わせ, knapsack calculator, 最適組み合わせ, 価格組み合わせ">
+<meta name="keywords" content="組み合わせ計算, 買い物組み合わせ, 金額計算ツール, 商品組み合わせ, 価格組み合わせ, knapsack calculator">
 
 <meta name="robots" content="index,follow">
+
+<script type="application/ld+json">
+{
+"@context":"https://schema.org",
+"@type":"WebApplication",
+"name":"買い物組み合わせ計算ツール",
+"description":"金額ぴったりの買い物組み合わせを計算できるツール",
+"applicationCategory":"Calculator"
+}
+</script>
 
 <style>
 
@@ -25,18 +34,12 @@ color:#333;
 }
 
 .container{
-max-width:700px;
+max-width:720px;
 margin:auto;
 }
 
-.header{
+h1{
 text-align:center;
-margin-bottom:30px;
-}
-
-.header h1{
-font-size:32px;
-margin-bottom:10px;
 }
 
 .card{
@@ -74,18 +77,17 @@ transform:translateY(-2px);
 .delete{background:#ef4444;color:white;font-size:12px;padding:5px 10px;}
 
 .product{
-background:#f1f5ff;
+background:#eef2ff;
 padding:10px;
 border-radius:10px;
 margin-bottom:8px;
 display:flex;
 justify-content:space-between;
-align-items:center;
 }
 
 .resultCard{
 background:#f8fafc;
-padding:12px;
+padding:10px;
 border-radius:10px;
 margin-top:10px;
 }
@@ -105,41 +107,11 @@ margin-top:40px;
 
 <div class="container">
 
-<div class="header">
-
 <h1>🛒 買い物組み合わせ計算ツール</h1>
 
-<p>
-商品の価格や個数を設定して<br>
-目標金額になる組み合わせを自動計算できる無料ツールです。
-</p>
-
-</div>
 <div class="card">
 
-<h2>このツールでできること</h2>
-
-<p>
-
-このツールでは商品の価格や個数条件を設定して、  
-目標金額になる買い物の組み合わせを自動で計算できます。
-
-</p>
-
-<ul>
-
-<li>金額ぴったりの組み合わせを探す</li>
-<li>イベント景品の組み合わせ計算</li>
-<li>予算内の買い物計画</li>
-<li>ポイント消費の最適化</li>
-
-</ul>
-
-</div>
-  
-<div class="card">
-
-<h2>商品追加</h2>
+<h2>商品を追加</h2>
 
 <input id="product" placeholder="商品名">
 <input id="price" type="number" placeholder="値段">
@@ -147,8 +119,7 @@ margin-top:40px;
 <input id="max" type="number" placeholder="最大数（未入力なら100）">
 
 <button class="add" onclick="addItem()">商品追加</button>
-
-<button class="reset" onclick="resetItems()">商品リストをリセット</button>
+<button class="reset" onclick="resetItems()">商品リセット</button>
 
 </div>
 
@@ -174,22 +145,41 @@ margin-top:40px;
 
 <div class="card">
 
-<h2>よくある使い方</h2>
+<h2>使い方</h2>
+
+<p>
+商品の価格・必須数・最大数を設定すると、目標金額になる買い物の組み合わせを自動で計算できます。
+</p>
 
 <ul>
-
-<li>1000円ぴったりの買い物組み合わせを探す</li>
-<li>イベント配布用の景品セットを作る</li>
-<li>複数商品の組み合わせを検討する</li>
-
+<li>イベント景品の組み合わせ計算</li>
+<li>予算内の買い物計画</li>
+<li>ポイント消費の組み合わせ</li>
 </ul>
+
+</div>
+
+<div class="card">
+
+<h2>よくある質問</h2>
+
+<h3>組み合わせ計算とは？</h3>
+
+<p>
+商品の価格や数量条件をもとに、指定した金額になる組み合わせを計算する方法です。
+</p>
+
+<h3>このツールは無料ですか？</h3>
+
+<p>
+はい、この買い物組み合わせ計算ツールは無料で利用できます。
+</p>
 
 </div>
 
 <div class="footer">
 
-© 買い物組み合わせ計算ツール  
-結果は参考としてご利用ください
+© 買い物組み合わせ計算ツール
 
 </div>
 
@@ -197,102 +187,98 @@ margin-top:40px;
 
 <script>
 
-let items=[];
-loadItems();
+let items=[]
+loadItems()
 
 function saveItems(){
-localStorage.setItem("shoppingItems",JSON.stringify(items));
+localStorage.setItem("shoppingItems",JSON.stringify(items))
 }
 
 function loadItems(){
-let data=localStorage.getItem("shoppingItems");
+let data=localStorage.getItem("shoppingItems")
 if(data){
-items=JSON.parse(data);
-displayItems();
+items=JSON.parse(data)
+displayItems()
 }
 }
 
 function addItem(){
 
-let name=document.getElementById("product").value;
-let price=Number(document.getElementById("price").value);
-let required=Number(document.getElementById("required").value);
-let maxInput=document.getElementById("max").value;
+let name=document.getElementById("product").value
+let price=Number(document.getElementById("price").value)
+let required=Number(document.getElementById("required").value)
+let maxInput=document.getElementById("max").value
 
-let max=maxInput==""?100:Number(maxInput);
+let max=maxInput==""?100:Number(maxInput)
 
-items.push({name,price,required,max});
+items.push({name,price,required,max})
 
-saveItems();
-displayItems();
+saveItems()
+displayItems()
 
 }
 
 function displayItems(){
 
-let list=document.getElementById("list");
-list.innerHTML="";
+let list=document.getElementById("list")
+list.innerHTML=""
 
 items.forEach((item,index)=>{
 
-let div=document.createElement("div");
-div.className="product";
+let div=document.createElement("div")
+div.className="product"
 
 div.innerHTML=
 "<div>"+item.name+" "+item.price+"円<br><small>必須"+item.required+" 最大"+item.max+"</small></div>"
-+"<button class='delete' onclick='deleteItem("+index+")'>削除</button>";
++"<button class='delete' onclick='deleteItem("+index+")'>削除</button>"
 
-list.appendChild(div);
+list.appendChild(div)
 
-});
+})
 
 }
 
 function deleteItem(index){
 
-items.splice(index,1);
+items.splice(index,1)
 
-saveItems();
-displayItems();
+saveItems()
+displayItems()
 
 }
 
 function resetItems(){
 
-if(confirm("商品リストを削除しますか？")){
-
-items=[];
-saveItems();
-displayItems();
-
-}
+items=[]
+saveItems()
+displayItems()
 
 }
 
 function comboKey(combo){
 
-let keys=Object.keys(combo).sort();
-return keys.map(k=>k+combo[k]).join("_");
+let keys=Object.keys(combo).sort()
+return keys.map(k=>k+combo[k]).join("_")
 
 }
 
 function findBest(){
 
-let target=Number(document.getElementById("target").value);
+let target=Number(document.getElementById("target").value)
 
-let maxSearch=target+500;
+let maxSearch=target+500
 
-let LIMIT=100;
+let LIMIT=100
 
-let dp=new Array(maxSearch+1).fill(null);
+let dp=new Array(maxSearch+1).fill(null)
 
-dp[0]=[{}];
+dp[0]=[{}]
 
-let seen=new Set();
+let seen=new Set()
 
 items.forEach(item=>{
 
-let next=[...dp];
+let next=[...dp]
 
 for(let sum=0;sum<=maxSearch;sum++){
 
@@ -302,52 +288,52 @@ dp[sum].forEach(combo=>{
 
 for(let c=item.required;c<=item.max;c++){
 
-let newSum=sum+item.price*c;
+let newSum=sum+item.price*c
 
-if(newSum>maxSearch) break;
+if(newSum>maxSearch) break
 
-let newCombo={...combo};
+let newCombo={...combo}
 
 if(c>0){
 
-newCombo[item.name]=(newCombo[item.name]||0)+c;
+newCombo[item.name]=(newCombo[item.name]||0)+c
 
 }
 
-let key=comboKey(newCombo);
+let key=comboKey(newCombo)
 
-if(seen.has(key)) continue;
+if(seen.has(key)) continue
 
-seen.add(key);
+seen.add(key)
 
-if(!next[newSum]) next[newSum]=[];
+if(!next[newSum]) next[newSum]=[]
 
 if(next[newSum].length<LIMIT){
 
-next[newSum].push(newCombo);
+next[newSum].push(newCombo)
 
 }
 
 }
 
-});
+})
 
 }
 
 }
 
-dp=next;
+dp=next
 
-});
+})
 
-let bestSum=null;
+let bestSum=null
 
 for(let i=target;i<=maxSearch;i++){
 
 if(dp[i]){
 
-bestSum=i;
-break;
+bestSum=i
+break
 
 }
 
@@ -355,32 +341,32 @@ break;
 
 if(bestSum==null){
 
-document.getElementById("result").innerHTML="見つかりません";
-return;
+document.getElementById("result").innerHTML="見つかりません"
+return
 
 }
 
-let html="<h3>合計 "+bestSum+"円</h3>";
+let html="<h3>合計 "+bestSum+"円</h3>"
 
-html+="<p>見つかった組み合わせ数："+dp[bestSum].length+"件</p>";
+html+="<p>見つかった組み合わせ数："+dp[bestSum].length+"件</p>"
 
 dp[bestSum].forEach((combo,i)=>{
 
-html+="<div class='resultCard'>";
+html+="<div class='resultCard'>"
 
-html+="パターン"+(i+1)+"<br>";
+html+="パターン"+(i+1)+"<br>"
 
 for(let name in combo){
 
-html+=name+" × "+combo[name]+"<br>";
+html+=name+" × "+combo[name]+"<br>"
 
 }
 
-html+="</div>";
+html+="</div>"
 
-});
+})
 
-document.getElementById("result").innerHTML=html;
+document.getElementById("result").innerHTML=html
 
 }
 
