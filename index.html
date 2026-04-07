@@ -1,58 +1,93 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>高速買い物最適化</title>
+<title>買い物最適化</title>
 
 <style>
 
 body{
-font-family:Arial;
-background:#f0f0f0;
-text-align:center;
+font-family:-apple-system,BlinkMacSystemFont;
+background:linear-gradient(135deg,#6dd5fa,#2980b9);
+margin:0;
 padding:20px;
 }
 
 .container{
 background:white;
+border-radius:20px;
 padding:20px;
-border-radius:15px;
 max-width:420px;
 margin:auto;
+box-shadow:0 10px 30px rgba(0,0,0,0.2);
+}
+
+h2,h3{
+text-align:center;
 }
 
 input{
-width:90%;
-padding:10px;
-margin:5px;
-font-size:18px;
+width:100%;
+padding:12px;
+margin:6px 0;
+border-radius:10px;
+border:1px solid #ddd;
+font-size:16px;
+box-sizing:border-box;
 }
 
 button{
-padding:10px;
-margin:5px;
+width:100%;
+padding:12px;
+margin-top:10px;
+border:none;
+border-radius:10px;
 font-size:16px;
+cursor:pointer;
+}
+
+.add{
+background:#27ae60;
+color:white;
+}
+
+.calc{
+background:#2980b9;
+color:white;
+}
+
+.delete{
+background:#e74c3c;
+color:white;
+border:none;
+border-radius:8px;
+padding:5px 10px;
+}
+
+ul{
+padding:0;
 }
 
 li{
 list-style:none;
-background:#eee;
-margin:5px;
+background:#f5f6fa;
+margin:6px 0;
 padding:10px;
-border-radius:8px;
+border-radius:10px;
 display:flex;
 justify-content:space-between;
+align-items:center;
 }
 
-.delete{
-background:red;
-color:white;
-border:none;
-padding:5px 10px;
-border-radius:5px;
+.resultCard{
+background:#ecf0f1;
+padding:10px;
+border-radius:10px;
+margin:10px 0;
 }
 
 </style>
@@ -63,26 +98,25 @@ border-radius:5px;
 
 <div class="container">
 
-<h2>商品追加</h2>
+<h2>🛒 商品追加</h2>
 
 <input id="product" placeholder="商品名">
+
 <input id="price" type="number" placeholder="値段">
-<input id="min" type="number" placeholder="最小個数">
+
+<input id="required" type="number" placeholder="必須数">
+
 <input id="max" type="number" placeholder="最大個数">
 
-<br>
-
-<button onclick="addItem()">追加</button>
+<button class="add" onclick="addItem()">商品追加</button>
 
 <ul id="list"></ul>
 
-<h3>目標金額</h3>
+<h3>🎯 目標金額</h3>
 
 <input id="target" type="number" placeholder="目標金額">
 
-<br>
-
-<button onclick="findBest()">最適組み合わせ</button>
+<button class="calc" onclick="findBest()">組み合わせ計算</button>
 
 <h3>結果</h3>
 
@@ -98,10 +132,10 @@ function addItem(){
 
 let name=document.getElementById("product").value;
 let price=Number(document.getElementById("price").value);
-let min=Number(document.getElementById("min").value);
+let required=Number(document.getElementById("required").value);
 let max=Number(document.getElementById("max").value);
 
-items.push({name,price,min,max});
+items.push({name,price,required,max});
 
 displayItems();
 
@@ -110,6 +144,7 @@ displayItems();
 function displayItems(){
 
 let list=document.getElementById("list");
+
 list.innerHTML="";
 
 items.forEach((item,index)=>{
@@ -117,8 +152,10 @@ items.forEach((item,index)=>{
 let li=document.createElement("li");
 
 li.innerHTML=
-item.name+" "+item.price+"円 (最小"+item.min+" 最大"+item.max+")"+
-" <button class='delete' onclick='deleteItem("+index+")'>削除</button>";
+
+item.name+" "+item.price+"円 (必須"+item.required+" 最大"+item.max+")"
+
++" <button class='delete' onclick='deleteItem("+index+")'>削除</button>";
 
 list.appendChild(li);
 
@@ -129,6 +166,7 @@ list.appendChild(li);
 function deleteItem(index){
 
 items.splice(index,1);
+
 displayItems();
 
 }
@@ -153,7 +191,7 @@ if(dp[sum]!=null){
 
 dp[sum].forEach(combo=>{
 
-for(let c=item.min;c<=item.max;c++){
+for(let c=item.required;c<=item.max;c++){
 
 let newSum=sum+item.price*c;
 
@@ -171,8 +209,7 @@ if(next[newSum]==null){
 
 next[newSum]=[newCombo];
 
-}
-else{
+}else{
 
 next[newSum].push(newCombo);
 
@@ -197,6 +234,7 @@ for(let i=target;i<=maxSearch;i++){
 if(dp[i]!=null){
 
 bestSum=i;
+
 break;
 
 }
@@ -206,35 +244,39 @@ break;
 if(bestSum==null){
 
 document.getElementById("result").innerHTML="見つかりません";
+
 return;
 
 }
 
 let combos=dp[bestSum];
 
-let text="おすすめ組み合わせ<br><br>";
+let html="";
 
 combos.forEach((combo,i)=>{
 
-text+="パターン"+(i+1)+"<br>";
+html+="<div class='resultCard'>";
+
+html+="<b>パターン"+(i+1)+"</b><br>";
 
 for(let name in combo){
 
-text+=name+" × "+combo[name]+"<br>";
+html+=name+" × "+combo[name]+"<br>";
 
 }
 
-text+="<br>";
+html+="</div>";
 
 });
 
-text+="合計 "+bestSum+" 円";
+html+="<b>合計 "+bestSum+" 円</b>";
 
-document.getElementById("result").innerHTML=text;
+document.getElementById("result").innerHTML=html;
 
 }
 
 </script>
 
 </body>
+
 </html>
