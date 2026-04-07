@@ -151,7 +151,7 @@ function findBest(){
 let target=Number(document.getElementById("target").value);
 
 let bestSum=Infinity;
-let bestCombo=null;
+let bestCombos=[];
 
 function search(index,sum,combo){
 
@@ -162,7 +162,12 @@ if(sum>=target){
 if(sum<bestSum){
 
 bestSum=sum;
-bestCombo={...combo};
+bestCombos=[{...combo}];
+
+}
+else if(sum===bestSum){
+
+bestCombos.push({...combo});
 
 }
 
@@ -175,7 +180,6 @@ return;
 let item=items[index];
 
 let start=0;
-
 if(item.required) start=1;
 
 for(let count=start;count<=item.limit;count++){
@@ -185,9 +189,7 @@ let newSum=sum+item.price*count;
 let newCombo={...combo};
 
 if(count>0){
-
 newCombo[item.name]=count;
-
 }
 
 search(index+1,newSum,newCombo);
@@ -198,23 +200,30 @@ search(index+1,newSum,newCombo);
 
 search(0,0,{});
 
-if(bestCombo==null){
+if(bestCombos.length===0){
 
 document.getElementById("result").innerHTML="見つかりません";
-
 return;
 
 }
 
 let text="おすすめ組み合わせ<br><br>";
 
-for(let name in bestCombo){
+bestCombos.forEach((combo,i)=>{
 
-text+=name+" × "+bestCombo[name]+"<br>";
+text+="パターン"+(i+1)+"<br>";
+
+for(let name in combo){
+
+text+=name+" × "+combo[name]+"<br>";
 
 }
 
-text+="<br>合計 "+bestSum+" 円";
+text+="<br>";
+
+});
+
+text+="合計 "+bestSum+" 円";
 
 document.getElementById("result").innerHTML=text;
 
