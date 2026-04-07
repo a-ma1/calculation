@@ -1,75 +1,86 @@
 <!DOCTYPE html>
 <html>
+
 <head>
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>買い物最適化</title>
+<title>組み合わせ計算</title>
 
 <style>
 
 body{
-font-family:sans-serif;
-background:#eef2f7;
-padding:20px;
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI";
+background:linear-gradient(135deg,#667eea,#764ba2);
+margin:0;
+padding:30px;
 }
 
 .container{
 background:white;
-max-width:420px;
+max-width:450px;
 margin:auto;
-padding:20px;
-border-radius:16px;
-box-shadow:0 8px 20px rgba(0,0,0,0.1);
+padding:25px;
+border-radius:20px;
+box-shadow:0 20px 40px rgba(0,0,0,0.2);
+}
+
+h2{
+text-align:center;
 }
 
 input{
 width:100%;
-padding:10px;
+padding:12px;
 margin:6px 0;
-border-radius:8px;
-border:1px solid #ccc;
+border-radius:10px;
+border:1px solid #ddd;
 }
 
 button{
 width:100%;
-padding:10px;
+padding:12px;
 margin-top:10px;
 border:none;
-border-radius:8px;
-background:#2d7ef7;
-color:white;
+border-radius:10px;
 font-size:16px;
+cursor:pointer;
 }
 
-ul{
-padding:0;
+.add{
+background:#27ae60;
+color:white;
 }
 
-li{
-list-style:none;
-background:#f4f6fa;
-margin:5px 0;
-padding:8px;
-border-radius:8px;
-display:flex;
-justify-content:space-between;
+.calc{
+background:#3498db;
+color:white;
 }
 
 .delete{
 background:#e74c3c;
-padding:3px 8px;
-border-radius:6px;
 color:white;
+padding:4px 10px;
+border-radius:8px;
 border:none;
 }
 
-.result{
-background:#f0f4ff;
+li{
+list-style:none;
+background:#f5f6fa;
+margin:6px 0;
 padding:10px;
-margin-top:10px;
 border-radius:10px;
+display:flex;
+justify-content:space-between;
+}
+
+.result{
+background:#f1f4ff;
+padding:10px;
+border-radius:10px;
+margin-top:10px;
 }
 
 </style>
@@ -80,14 +91,17 @@ border-radius:10px;
 
 <div class="container">
 
-<h3>商品追加</h3>
+<h2>🛒 組み合わせ計算</h2>
 
 <input id="product" placeholder="商品名">
-<input id="price" type="number" placeholder="値段">
-<input id="required" type="number" placeholder="必須数">
-<input id="max" type="number" placeholder="最大個数">
 
-<button onclick="addItem()">追加</button>
+<input id="price" type="number" placeholder="値段">
+
+<input id="required" type="number" placeholder="必須数">
+
+<input id="max" type="number" placeholder="最大数 (未入力なら100)">
+
+<button class="add" onclick="addItem()">商品追加</button>
 
 <ul id="list"></ul>
 
@@ -95,7 +109,7 @@ border-radius:10px;
 
 <input id="target" type="number">
 
-<button onclick="findBest()">組み合わせ計算</button>
+<button class="calc" onclick="findBest()">組み合わせ計算</button>
 
 <div id="result"></div>
 
@@ -108,9 +122,14 @@ let items=[];
 function addItem(){
 
 let name=document.getElementById("product").value;
+
 let price=Number(document.getElementById("price").value);
+
 let required=Number(document.getElementById("required").value);
-let max=Number(document.getElementById("max").value);
+
+let maxInput=document.getElementById("max").value;
+
+let max=maxInput===""?100:Number(maxInput);
 
 items.push({name,price,required,max});
 
@@ -121,6 +140,7 @@ displayItems();
 function displayItems(){
 
 let list=document.getElementById("list");
+
 list.innerHTML="";
 
 items.forEach((item,index)=>{
@@ -233,11 +253,12 @@ break;
 if(bestSum==null){
 
 document.getElementById("result").innerHTML="見つかりません";
+
 return;
 
 }
 
-let html="<b>合計 "+bestSum+"円</b>";
+let html="<h3>合計 "+bestSum+"円</h3>";
 
 dp[bestSum].forEach((combo,i)=>{
 
@@ -262,4 +283,5 @@ document.getElementById("result").innerHTML=html;
 </script>
 
 </body>
+
 </html>
