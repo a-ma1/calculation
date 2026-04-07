@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>買い物最適化</title>
+<title>高速買い物最適化</title>
 
 <style>
 
@@ -19,7 +20,7 @@ padding:20px;
 background:white;
 padding:20px;
 border-radius:15px;
-max-width:400px;
+max-width:420px;
 margin:auto;
 }
 
@@ -50,6 +51,7 @@ justify-content:space-between;
 background:red;
 color:white;
 border:none;
+padding:5px 10px;
 border-radius:5px;
 }
 
@@ -63,18 +65,13 @@ border-radius:5px;
 
 <h2>商品追加</h2>
 
-<input type="text" id="product" placeholder="商品名">
+<input id="product" placeholder="商品名">
 
-<input type="number" id="price" placeholder="値段">
+<input id="price" type="number" placeholder="値段">
 
-<input type="number" id="limit" placeholder="最大個数">
+<input id="min" type="number" placeholder="最小個数">
 
-<br>
-
-<label>
-<input type="checkbox" id="required">
-必ず買う
-</label>
+<input id="max" type="number" placeholder="最大個数">
 
 <br>
 
@@ -84,7 +81,7 @@ border-radius:5px;
 
 <h3>目標金額</h3>
 
-<input type="number" id="target" placeholder="目標金額">
+<input id="target" type="number" placeholder="目標金額">
 
 <br>
 
@@ -104,17 +101,12 @@ function addItem(){
 
 let name=document.getElementById("product").value;
 let price=Number(document.getElementById("price").value);
-let limit=Number(document.getElementById("limit").value);
-let required=document.getElementById("required").checked;
+let min=Number(document.getElementById("min").value);
+let max=Number(document.getElementById("max").value);
 
-items.push({name,price,limit,required});
+items.push({name,price,min,max});
 
 displayItems();
-
-document.getElementById("product").value="";
-document.getElementById("price").value="";
-document.getElementById("limit").value="";
-document.getElementById("required").checked=false;
 
 }
 
@@ -125,12 +117,10 @@ list.innerHTML="";
 
 items.forEach((item,index)=>{
 
-let requiredText=item.required ? "★必須" : "";
-
 let li=document.createElement("li");
 
 li.innerHTML=
-item.name+" "+item.price+"円 (最大"+item.limit+"個) "+requiredText+
+item.name+" "+item.price+"円 (最小"+item.min+" 最大"+item.max+")"+
 " <button class='delete' onclick='deleteItem("+index+")'>削除</button>";
 
 list.appendChild(li);
@@ -150,68 +140,73 @@ function findBest(){
 
 let target=Number(document.getElementById("target").value);
 
-let bestSum=Infinity;
-let bestCombos=[];
+let maxSearch=target+1000;
 
-function search(index,sum,combo){
+let dp=new Array(maxSearch+1).fill(null);
 
-if(index>=items.length){
+dp[0]={};
 
-if(sum>=target){
+items.forEach(item=>{
 
-if(sum<bestSum){
+let next=[...dp];
 
-bestSum=sum;
-bestCombos=[{...combo}];
+for(let sum=0;sum<=maxSearch;sum++){
+
+if(dp[sum]!==null){
+
+for(let c=item.min;c<=item.max;c++){
+
+let newSum=sum+item.price*c;
+
+if(newSum>maxSearch) break;
+
+let combo={...dp[sum]};
+
+if(c>0){
+
+combo[item.name]=(combo[item.name]||0)+c;
 
 }
-else if(sum===bestSum){
 
-bestCombos.push({...combo});
+if(next[newSum]==null){
 
-}
-
-}
-
-return;
-
-}
-
-let item=items[index];
-
-let start=0;
-if(item.required) start=1;
-
-for(let count=start;count<=item.limit;count++){
-
-let newSum=sum+item.price*count;
-
-let newCombo={...combo};
-
-if(count>0){
-newCombo[item.name]=count;
-}
-
-search(index+1,newSum,newCombo);
+next[newSum]=combo;
 
 }
 
 }
 
-search(0,0,{});
+}
 
-if(bestCombos.length===0){
+}
+
+dp=next;
+
+});
+
+let bestSum=null;
+
+for(let i=target;i<=maxSearch;i++){
+
+if(dp[i]!=null){
+
+bestSum=i;
+break;
+
+}
+
+}
+
+if(bestSum==null){
 
 document.getElementById("result").innerHTML="見つかりません";
 return;
 
 }
 
+let combo=dp[bestSum];
+
 let text="おすすめ組み合わせ<br><br>";
-
-bestCombos.forEach((combo,i)=>{
-
-text+="パターン"+(i+1)+"<br>";
 
 for(let name in combo){
 
@@ -219,11 +214,7 @@ text+=name+" × "+combo[name]+"<br>";
 
 }
 
-text+="<br>";
-
-});
-
-text+="合計 "+bestSum+" 円";
+text+="<br>合計 "+bestSum+" 円";
 
 document.getElementById("result").innerHTML=text;
 
@@ -232,4 +223,5 @@ document.getElementById("result").innerHTML=text;
 </script>
 
 </body>
+
 </html>
