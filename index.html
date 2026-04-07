@@ -1,42 +1,50 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 
 <head>
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>買い物組み合わせ計算</title>
+<title>買い物組み合わせ計算ツール｜目標金額になる商品組み合わせを自動計算</title>
+
+<meta name="description" content="商品の価格・必須数・最大数を設定すると、目標金額になる買い物の組み合わせを自動計算する無料ツール。すべての組み合わせを瞬時に表示できます。">
+
+<meta name="keywords" content="組み合わせ計算, 買い物組み合わせ, 金額計算ツール, 商品組み合わせ, knapsack calculator, 最適組み合わせ, 価格組み合わせ">
+
+<meta name="robots" content="index,follow">
 
 <style>
 
 body{
-font-family:-apple-system,BlinkMacSystemFont,"Segoe UI";
-background:linear-gradient(135deg,#667eea,#764ba2);
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto;
+background:#f6f8ff;
 margin:0;
-padding:30px;
+padding:40px 10px;
+color:#333;
 }
 
 .container{
-background:white;
-max-width:500px;
+max-width:700px;
 margin:auto;
-padding:25px;
-border-radius:20px;
-box-shadow:0 20px 40px rgba(0,0,0,0.2);
 }
 
-h1{
+.header{
 text-align:center;
+margin-bottom:30px;
 }
 
-.description{
-background:#f4f6ff;
-padding:15px;
-border-radius:12px;
+.header h1{
+font-size:32px;
+margin-bottom:10px;
+}
+
+.card{
+background:white;
+border-radius:16px;
+padding:20px;
 margin-bottom:20px;
-font-size:14px;
-line-height:1.6;
+box-shadow:0 10px 25px rgba(0,0,0,0.08);
 }
 
 input{
@@ -48,65 +56,45 @@ border:1px solid #ddd;
 }
 
 button{
-width:100%;
 padding:12px;
-margin-top:10px;
 border:none;
 border-radius:10px;
-font-size:16px;
 cursor:pointer;
+margin-top:10px;
 transition:0.2s;
 }
 
 button:hover{
-transform:scale(1.03);
+transform:translateY(-2px);
 }
 
-.add{
-background:#27ae60;
-color:white;
-}
+.add{background:#22c55e;color:white;width:100%;}
+.calc{background:#4f46e5;color:white;width:100%;}
+.reset{background:#f59e0b;color:white;width:100%;}
+.delete{background:#ef4444;color:white;font-size:12px;padding:5px 10px;}
 
-.calc{
-background:#3498db;
-color:white;
-}
-
-.reset{
-background:#e67e22;
-color:white;
-}
-
-.delete{
-background:#e74c3c;
-color:white;
-padding:4px 10px;
-border-radius:8px;
-border:none;
-}
-
-li{
-list-style:none;
-background:#f5f6fa;
-margin:6px 0;
+.product{
+background:#f1f5ff;
 padding:10px;
 border-radius:10px;
+margin-bottom:8px;
 display:flex;
 justify-content:space-between;
+align-items:center;
 }
 
-.result{
-background:#f1f4ff;
-padding:10px;
+.resultCard{
+background:#f8fafc;
+padding:12px;
 border-radius:10px;
 margin-top:10px;
 }
 
 .footer{
-margin-top:20px;
-font-size:12px;
-color:#555;
 text-align:center;
+font-size:12px;
+color:#666;
+margin-top:40px;
 }
 
 </style>
@@ -117,30 +105,43 @@ text-align:center;
 
 <div class="container">
 
-<h1>🛒 買い物組み合わせ計算</h1>
+<div class="header">
 
-<div class="description">
+<h1>🛒 買い物組み合わせ計算ツール</h1>
 
-<strong>使い方</strong><br>
-1 商品名・値段・必須数・最大数を入力して「商品追加」<br>
-2 商品は複数追加できます<br>
-3 目標金額を入力して「組み合わせ計算」<br>
-4 最大数未入力の場合は自動で100になります
+<p>
+商品の価格や個数を設定して<br>
+目標金額になる組み合わせを自動計算できる無料ツールです。
+</p>
 
 </div>
+
+<div class="card">
+
+<h2>商品追加</h2>
 
 <input id="product" placeholder="商品名">
 <input id="price" type="number" placeholder="値段">
 <input id="required" type="number" placeholder="必須数">
-<input id="max" type="number" placeholder="最大数 (未入力なら100)">
+<input id="max" type="number" placeholder="最大数（未入力なら100）">
 
 <button class="add" onclick="addItem()">商品追加</button>
 
 <button class="reset" onclick="resetItems()">商品リストをリセット</button>
 
-<ul id="list"></ul>
+</div>
 
-<h3>目標金額</h3>
+<div class="card">
+
+<h2>商品リスト</h2>
+
+<div id="list"></div>
+
+</div>
+
+<div class="card">
+
+<h2>目標金額</h2>
 
 <input id="target" type="number">
 
@@ -148,10 +149,48 @@ text-align:center;
 
 <div id="result"></div>
 
+</div>
+
+<div class="card">
+
+<h2>このツールでできること</h2>
+
+<p>
+
+このツールでは商品の価格や個数条件を設定して、  
+目標金額になる買い物の組み合わせを自動で計算できます。
+
+</p>
+
+<ul>
+
+<li>金額ぴったりの組み合わせを探す</li>
+<li>イベント景品の組み合わせ計算</li>
+<li>予算内の買い物計画</li>
+<li>ポイント消費の最適化</li>
+
+</ul>
+
+</div>
+
+<div class="card">
+
+<h2>よくある使い方</h2>
+
+<ul>
+
+<li>1000円ぴったりの買い物組み合わせを探す</li>
+<li>イベント配布用の景品セットを作る</li>
+<li>複数商品の組み合わせを検討する</li>
+
+</ul>
+
+</div>
+
 <div class="footer">
 
-このツールは計算をサポートする目的で作られています。<br>
-結果は参考としてご利用ください。
+© 買い物組み合わせ計算ツール  
+結果は参考としてご利用ください
 
 </div>
 
@@ -160,37 +199,25 @@ text-align:center;
 <script>
 
 let items=[];
-
 loadItems();
 
 function saveItems(){
-
 localStorage.setItem("shoppingItems",JSON.stringify(items));
-
 }
 
 function loadItems(){
-
 let data=localStorage.getItem("shoppingItems");
-
 if(data){
-
 items=JSON.parse(data);
-
 displayItems();
-
 }
-
 }
 
 function addItem(){
 
 let name=document.getElementById("product").value;
-
 let price=Number(document.getElementById("price").value);
-
 let required=Number(document.getElementById("required").value);
-
 let maxInput=document.getElementById("max").value;
 
 let max=maxInput==""?100:Number(maxInput);
@@ -198,7 +225,6 @@ let max=maxInput==""?100:Number(maxInput);
 items.push({name,price,required,max});
 
 saveItems();
-
 displayItems();
 
 }
@@ -206,20 +232,18 @@ displayItems();
 function displayItems(){
 
 let list=document.getElementById("list");
-
 list.innerHTML="";
 
 items.forEach((item,index)=>{
 
-let li=document.createElement("li");
+let div=document.createElement("div");
+div.className="product";
 
-li.innerHTML=
+div.innerHTML=
+"<div>"+item.name+" "+item.price+"円<br><small>必須"+item.required+" 最大"+item.max+"</small></div>"
++"<button class='delete' onclick='deleteItem("+index+")'>削除</button>";
 
-item.name+" "+item.price+"円 (必須"+item.required+" 最大"+item.max+")"
-
-+" <button class='delete' onclick='deleteItem("+index+")'>削除</button>";
-
-list.appendChild(li);
+list.appendChild(div);
 
 });
 
@@ -230,19 +254,16 @@ function deleteItem(index){
 items.splice(index,1);
 
 saveItems();
-
 displayItems();
 
 }
 
 function resetItems(){
 
-if(confirm("商品リストをすべて削除しますか？")){
+if(confirm("商品リストを削除しますか？")){
 
 items=[];
-
 saveItems();
-
 displayItems();
 
 }
@@ -252,7 +273,6 @@ displayItems();
 function comboKey(combo){
 
 let keys=Object.keys(combo).sort();
-
 return keys.map(k=>k+combo[k]).join("_");
 
 }
@@ -337,16 +357,17 @@ break;
 if(bestSum==null){
 
 document.getElementById("result").innerHTML="見つかりません";
-
 return;
 
 }
 
 let html="<h3>合計 "+bestSum+"円</h3>";
 
+html+="<p>見つかった組み合わせ数："+dp[bestSum].length+"件</p>";
+
 dp[bestSum].forEach((combo,i)=>{
 
-html+="<div class='result'>";
+html+="<div class='resultCard'>";
 
 html+="パターン"+(i+1)+"<br>";
 
@@ -367,5 +388,4 @@ document.getElementById("result").innerHTML=html;
 </script>
 
 </body>
-
 </html>
