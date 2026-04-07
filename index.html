@@ -10,7 +10,7 @@
 <style>
 
 body{
-font-family:-apple-system,BlinkMacSystemFont;
+font-family:sans-serif;
 background:#eef2f7;
 padding:20px;
 }
@@ -145,6 +145,14 @@ displayItems();
 
 }
 
+function comboKey(combo){
+
+let keys=Object.keys(combo).sort();
+
+return keys.map(k=>k+combo[k]).join("_");
+
+}
+
 function findBest(){
 
 let target=Number(document.getElementById("target").value);
@@ -156,6 +164,8 @@ let LIMIT=200;
 let dp=new Array(maxSearch+1).fill(null);
 
 dp[0]=[{}];
+
+let seen=new Set();
 
 items.forEach(item=>{
 
@@ -181,11 +191,13 @@ newCombo[item.name]=(newCombo[item.name]||0)+c;
 
 }
 
-if(!next[newSum]){
+let key=comboKey(newCombo);
 
-next[newSum]=[];
+if(seen.has(key)) continue;
 
-}
+seen.add(key);
+
+if(!next[newSum]) next[newSum]=[];
 
 if(next[newSum].length<LIMIT){
 
