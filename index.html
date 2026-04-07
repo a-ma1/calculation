@@ -44,14 +44,12 @@ padding:10px;
 border-radius:8px;
 display:flex;
 justify-content:space-between;
-align-items:center;
 }
 
 .delete{
 background:red;
 color:white;
 border:none;
-padding:5px 10px;
 border-radius:5px;
 }
 
@@ -70,6 +68,13 @@ border-radius:5px;
 <input type="number" id="price" placeholder="値段">
 
 <input type="number" id="limit" placeholder="最大個数">
+
+<br>
+
+<label>
+<input type="checkbox" id="required">
+必ず買う
+</label>
 
 <br>
 
@@ -100,14 +105,16 @@ function addItem(){
 let name=document.getElementById("product").value;
 let price=Number(document.getElementById("price").value);
 let limit=Number(document.getElementById("limit").value);
+let required=document.getElementById("required").checked;
 
-items.push({name:name,price:price,limit:limit});
+items.push({name,price,limit,required});
 
 displayItems();
 
 document.getElementById("product").value="";
 document.getElementById("price").value="";
 document.getElementById("limit").value="";
+document.getElementById("required").checked=false;
 
 }
 
@@ -118,10 +125,12 @@ list.innerHTML="";
 
 items.forEach((item,index)=>{
 
+let requiredText=item.required ? "★必須" : "";
+
 let li=document.createElement("li");
 
 li.innerHTML=
-item.name+" "+item.price+"円 (最大"+item.limit+"個)"+
+item.name+" "+item.price+"円 (最大"+item.limit+"個) "+requiredText+
 " <button class='delete' onclick='deleteItem("+index+")'>削除</button>";
 
 list.appendChild(li);
@@ -133,7 +142,6 @@ list.appendChild(li);
 function deleteItem(index){
 
 items.splice(index,1);
-
 displayItems();
 
 }
@@ -147,6 +155,8 @@ let bestCombo=null;
 
 function search(index,sum,combo){
 
+if(index>=items.length){
+
 if(sum>=target){
 
 if(sum<bestSum){
@@ -156,15 +166,19 @@ bestCombo={...combo};
 
 }
 
+}
+
 return;
 
 }
 
-if(index>=items.length) return;
-
 let item=items[index];
 
-for(let count=0;count<=item.limit;count++){
+let start=0;
+
+if(item.required) start=1;
+
+for(let count=start;count<=item.limit;count++){
 
 let newSum=sum+item.price*count;
 
