@@ -6,7 +6,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>組み合わせ計算</title>
+<title>買い物組み合わせ計算</title>
 
 <style>
 
@@ -19,15 +19,25 @@ padding:30px;
 
 .container{
 background:white;
-max-width:450px;
+max-width:480px;
 margin:auto;
 padding:25px;
 border-radius:20px;
 box-shadow:0 20px 40px rgba(0,0,0,0.2);
 }
 
-h2{
+h1{
 text-align:center;
+margin-bottom:10px;
+}
+
+.description{
+background:#f4f6ff;
+padding:15px;
+border-radius:12px;
+margin-bottom:20px;
+font-size:14px;
+line-height:1.6;
 }
 
 input{
@@ -46,6 +56,11 @@ border:none;
 border-radius:10px;
 font-size:16px;
 cursor:pointer;
+transition:0.2s;
+}
+
+button:hover{
+transform:scale(1.03);
 }
 
 .add{
@@ -83,6 +98,14 @@ border-radius:10px;
 margin-top:10px;
 }
 
+.footer{
+margin-top:20px;
+font-size:12px;
+color:#555;
+text-align:center;
+line-height:1.6;
+}
+
 </style>
 
 </head>
@@ -91,7 +114,17 @@ margin-top:10px;
 
 <div class="container">
 
-<h2>🛒 組み合わせ計算</h2>
+<h1>🛒 買い物組み合わせ計算</h1>
+
+<div class="description">
+
+<strong>使い方</strong><br>
+1. 商品名・値段・必要数・最大数を入力して「商品追加」を押します。<br>
+2. 商品を複数追加できます。<br>
+3. 目標金額を入力して「組み合わせ計算」を押すと、条件に合う組み合わせを表示します。<br>
+4. 最大数を入力しない場合は自動で100として計算します。
+
+</div>
 
 <input id="product" placeholder="商品名">
 
@@ -112,6 +145,13 @@ margin-top:10px;
 <button class="calc" onclick="findBest()">組み合わせ計算</button>
 
 <div id="result"></div>
+
+<div class="footer">
+
+このツールは計算をサポートする目的で作られています。<br>
+結果は参考としてご利用ください。
+
+</div>
 
 </div>
 
@@ -179,7 +219,7 @@ let target=Number(document.getElementById("target").value);
 
 let maxSearch=target+500;
 
-let LIMIT=200;
+let LIMIT=100;
 
 let dp=new Array(maxSearch+1).fill(null);
 
