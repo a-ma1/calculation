@@ -66,11 +66,8 @@ border-radius:5px;
 <h2>商品追加</h2>
 
 <input id="product" placeholder="商品名">
-
 <input id="price" type="number" placeholder="値段">
-
 <input id="min" type="number" placeholder="最小個数">
-
 <input id="max" type="number" placeholder="最大個数">
 
 <br>
@@ -144,7 +141,7 @@ let maxSearch=target+1000;
 
 let dp=new Array(maxSearch+1).fill(null);
 
-dp[0]={};
+dp[0]=[{}];
 
 items.forEach(item=>{
 
@@ -152,7 +149,9 @@ let next=[...dp];
 
 for(let sum=0;sum<=maxSearch;sum++){
 
-if(dp[sum]!==null){
+if(dp[sum]!=null){
+
+dp[sum].forEach(combo=>{
 
 for(let c=item.min;c<=item.max;c++){
 
@@ -160,21 +159,28 @@ let newSum=sum+item.price*c;
 
 if(newSum>maxSearch) break;
 
-let combo={...dp[sum]};
+let newCombo={...combo};
 
 if(c>0){
 
-combo[item.name]=(combo[item.name]||0)+c;
+newCombo[item.name]=(newCombo[item.name]||0)+c;
 
 }
 
 if(next[newSum]==null){
 
-next[newSum]=combo;
+next[newSum]=[newCombo];
+
+}
+else{
+
+next[newSum].push(newCombo);
 
 }
 
 }
+
+});
 
 }
 
@@ -204,9 +210,13 @@ return;
 
 }
 
-let combo=dp[bestSum];
+let combos=dp[bestSum];
 
 let text="おすすめ組み合わせ<br><br>";
+
+combos.forEach((combo,i)=>{
+
+text+="パターン"+(i+1)+"<br>";
 
 for(let name in combo){
 
@@ -214,7 +224,11 @@ text+=name+" × "+combo[name]+"<br>";
 
 }
 
-text+="<br>合計 "+bestSum+" 円";
+text+="<br>";
+
+});
+
+text+="合計 "+bestSum+" 円";
 
 document.getElementById("result").innerHTML=text;
 
@@ -223,5 +237,4 @@ document.getElementById("result").innerHTML=text;
 </script>
 
 </body>
-
 </html>
